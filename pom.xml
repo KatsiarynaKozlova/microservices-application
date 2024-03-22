@@ -10,10 +10,12 @@
 
     <packaging>pom</packaging>
 
+    <url>http://maven.apache.org</url>
     <modules>
         <module>BookService</module>
         <module>LibraryService</module>
     </modules>
+
     <build>
         <plugins>
             <plugin>
