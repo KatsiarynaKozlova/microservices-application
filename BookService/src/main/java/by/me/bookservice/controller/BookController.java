@@ -1,6 +1,7 @@
 package by.me.bookservice.controller;
 
 import by.me.bookservice.dto.BookDTO;
+import by.me.bookservice.dto.BookListDTO;
 import by.me.bookservice.exceptions.BookNotFoundException;
 import by.me.bookservice.service.impl.DefaultBookService;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getBooks() {
+    public ResponseEntity<BookListDTO> getBooks() {
         return ResponseEntity.ok().body(bookService.getBooks());
     }
 
@@ -54,7 +55,7 @@ public class BookController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public HttpStatus deleteBook(@PathVariable Long id) {
         try {
             bookService.deleteBookById(id);
@@ -64,7 +65,7 @@ public class BookController {
         }
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<BookDTO> updateBookById(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
         try {
             return ResponseEntity.ok().body(bookService.updateBook(id, bookDTO));

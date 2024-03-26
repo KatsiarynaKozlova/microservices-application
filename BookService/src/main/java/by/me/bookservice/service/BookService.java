@@ -1,12 +1,13 @@
 package by.me.bookservice.service;
 
 import by.me.bookservice.dto.BookDTO;
+import by.me.bookservice.dto.BookListDTO;
 import by.me.bookservice.exceptions.BookNotFoundException;
 
 import java.util.List;
 
 public interface BookService {
-    List<BookDTO> getBooks();
+    BookListDTO getBooks();
 
     BookDTO addBook(BookDTO bookDTO);
 
