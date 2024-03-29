@@ -16,6 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <modelmapper.version>3.1.1</modelmapper.version>
+        <spring-cloud.version>4.1.0</spring-cloud.version>
     </properties>
     <dependencies>
         <dependency>
@@ -45,6 +46,11 @@
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <version>${spring-cloud.version}</version>
         </dependency>
     </dependencies>
 
