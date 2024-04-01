@@ -1,6 +1,7 @@
 package by.me.bookservice.service.impl;
 
 import by.me.bookservice.dto.BookDTO;
+import by.me.bookservice.dto.BookListDTO;
 import by.me.bookservice.model.Book;
 import by.me.bookservice.repository.BookRepository;
 import by.me.bookservice.service.BookService;
@@ -8,7 +9,6 @@ import by.me.bookservice.exceptions.BookNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,10 +23,10 @@ public class DefaultBookService implements BookService {
     }
 
     @Override
-    public List<BookDTO> getBooks() {
-        List<Book> books = bookRepository.findAll();
-        return books.stream().map((book) -> modelMapper.map(book, BookDTO.class))
-                .collect(Collectors.toList());
+    public BookListDTO getBooks() {
+        return new BookListDTO(bookRepository.findAll().stream()
+                .map((book) -> modelMapper.map(book, BookDTO.class))
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -41,7 +41,9 @@ public class DefaultBookService implements BookService {
         Optional<Book> opt_book = bookRepository.findByIsbn(isbn);
         if (opt_book.isPresent()) {
             return modelMapper.map(opt_book.get(), BookDTO.class);
-        } else throw new BookNotFoundException("book with isbn '" + isbn + "' not found");
+        } else {
+            throw new BookNotFoundException("book with isbn '" + isbn + "' not found");
+        }
     }
 
     @Override
@@ -56,7 +58,9 @@ public class DefaultBookService implements BookService {
         Optional<Book> opt_book = bookRepository.findById(id);
         if (opt_book.isPresent()) {
             bookRepository.delete(opt_book.get());
-        } else throw new BookNotFoundException("book with id '" + id + "' not found");
+        } else {
+            throw new BookNotFoundException("book with id '" + id + "' not found");
+        }
     }
 
     @Override
@@ -70,7 +74,9 @@ public class DefaultBookService implements BookService {
             opt_book.get().setDescription(book.getDescription());
             bookRepository.save(opt_book.get());
             return modelMapper.map(opt_book.get(), BookDTO.class);
-        } else throw new BookNotFoundException("book with id '" + id + "' not found");
+        } else {
+            throw new BookNotFoundException("book with id '" + id + "' not found");
+        }
     }
 
 }
