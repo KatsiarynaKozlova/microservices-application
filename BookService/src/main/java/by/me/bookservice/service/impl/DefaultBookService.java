@@ -6,21 +6,20 @@ import by.me.bookservice.model.Book;
 import by.me.bookservice.repository.BookRepository;
 import by.me.bookservice.service.BookService;
 import by.me.bookservice.exceptions.BookNotFoundException;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static by.me.bookservice.util.Constants.BOOK_NOT_FOUND_BY_ID;
+import static by.me.bookservice.util.Constants.BOOK_NOT_FOUND_BY_ISBN;
+
+@AllArgsConstructor
 @Service
 public class DefaultBookService implements BookService {
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
-
-    public DefaultBookService(BookRepository bookRepository, ModelMapper modelMapper) {
-        this.bookRepository = bookRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public BookListDTO getBooks() {
@@ -38,45 +37,36 @@ public class DefaultBookService implements BookService {
 
     @Override
     public BookDTO getBookByIsbn(String isbn) throws BookNotFoundException {
-        Optional<Book> opt_book = bookRepository.findByIsbn(isbn);
-        if (opt_book.isPresent()) {
-            return modelMapper.map(opt_book.get(), BookDTO.class);
-        } else {
-            throw new BookNotFoundException("book with isbn '" + isbn + "' not found");
-        }
+        Book opt_book = bookRepository.findByIsbn(isbn)
+                .orElseThrow(() -> new BookNotFoundException(String.format(BOOK_NOT_FOUND_BY_ISBN, isbn)));
+        return modelMapper.map(opt_book, BookDTO.class);
     }
 
     @Override
     public BookDTO getBookById(Long id) throws BookNotFoundException {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new BookNotFoundException(" book with id " + id + " not found"));
+                .orElseThrow(() -> new BookNotFoundException(String.format(BOOK_NOT_FOUND_BY_ID, id)));
         return modelMapper.map(book, BookDTO.class);
     }
 
     @Override
     public void deleteBookById(Long id) throws BookNotFoundException {
-        Optional<Book> opt_book = bookRepository.findById(id);
-        if (opt_book.isPresent()) {
-            bookRepository.delete(opt_book.get());
-        } else {
-            throw new BookNotFoundException("book with id '" + id + "' not found");
+        if(!bookRepository.existsById(id)) {
+            throw new BookNotFoundException(String.format(BOOK_NOT_FOUND_BY_ID, id));
         }
+        bookRepository.deleteById(id);
     }
 
     @Override
     public BookDTO updateBook(Long id, BookDTO book) throws BookNotFoundException {
-        Optional<Book> opt_book = bookRepository.findById(id);
-        if (opt_book.isPresent()) {
-            opt_book.get().setAuthor(book.getAuthor());
-            opt_book.get().setTitle(book.getTitle());
-            opt_book.get().setGenre(book.getGenre());
-            opt_book.get().setIsbn(book.getIsbn());
-            opt_book.get().setDescription(book.getDescription());
-            bookRepository.save(opt_book.get());
-            return modelMapper.map(opt_book.get(), BookDTO.class);
-        } else {
-            throw new BookNotFoundException("book with id '" + id + "' not found");
-        }
+        Book opt_book = bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException(String.format(BOOK_NOT_FOUND_BY_ID, id)));
+        opt_book.setAuthor(book.getAuthor());
+        opt_book.setTitle(book.getTitle());
+        opt_book.setGenre(book.getGenre());
+        opt_book.setIsbn(book.getIsbn());
+        opt_book.setDescription(book.getDescription());
+        bookRepository.save(opt_book);
+        return modelMapper.map(opt_book, BookDTO.class);
     }
-
 }
