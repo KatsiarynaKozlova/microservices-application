@@ -16,6 +16,10 @@ spring:
           uri: lb://LibraryService
           predicates:
             - Path=/library/**
+        - id: Authorization
+          uri: lb://AuthService
+          predicates:
+            - Path=/auth/**
 eureka:
   instance:
     prefer-ip-address: true
