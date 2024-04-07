@@ -3,13 +3,17 @@ package by.me.service.impl;
 import by.me.dto.JWTAuthRequest;
 import by.me.dto.JWTAuthResponse;
 import by.me.dto.UserDTO;
+import by.me.exceptions.UserNotFoundException;
+import by.me.exceptions.WrongPasswordException;
+import by.me.model.UserCredential;
 import by.me.repository.UserRepository;
 import by.me.service.AuthenticationService;
 import by.me.service.JWTProvider;
-import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -22,49 +26,29 @@ public class DefaultAuthenticationService implements AuthenticationService {
     private final UserRepository userRepository;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JWTProvider jwtProvider;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public JWTAuthResponse login(@NonNull JWTAuthRequest authRequest) throws AuthException {
-        UserDTO user = userRepository.findByEmail(authRequest.getEmail());
-           //     .orElseThrow(() -> new AuthException("Пользователь не найден"));
-        if (user.getPassword().equals(authRequest.getPassword())) {
+
+    public JWTAuthResponse login(@NonNull JWTAuthRequest authRequest) throws UserNotFoundException, WrongPasswordException {
+        UserCredential user = userRepository.findByEmail(authRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not found by EMAIL"));
+        if (user.getPassword().equals(passwordEncoder.encode(authRequest.getPassword()))) {
             String accessToken = jwtProvider.generateAccessToken(user);
             String refreshToken = jwtProvider.generateRefreshToken(user);
             refreshStorage.put(user.getEmail(), refreshToken);
             return new JWTAuthResponse(accessToken, refreshToken);
         } else {
-            throw new AuthException("Неправильный пароль");
+            throw new WrongPasswordException("Wrong password");
         }
     }
-
-    public JWTAuthResponse getAccessToken(@NonNull String refreshToken) {
-        if (jwtProvider.validateRefreshToken(refreshToken)) {
-            Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            String login = claims.getSubject();
-            String saveRefreshToken = refreshStorage.get(login);
-            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                UserDTO user = userRepository.findByEmail(login);
-                    //    .orElseThrow(() -> new AuthException("Пользователь не найден"));
-                String accessToken = jwtProvider.generateAccessToken(user);
-                return new JWTAuthResponse(accessToken, null);
-            }
+    @Override
+    public void register(UserDTO userDTO) throws AuthException {
+        if ( !userRepository.existsUserByEmail(userDTO.getEmail())) {
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            UserCredential user = modelMapper.map(userDTO, UserCredential.class);
+            userRepository.save(user);
         }
-        return new JWTAuthResponse(null, null);
-    }
-
-    public JWTAuthResponse refresh(@NonNull String refreshToken) throws AuthException {
-        if (jwtProvider.validateRefreshToken(refreshToken)) {
-            Claims claims = jwtProvider.getRefreshClaims(refreshToken);
-            String login = claims.getSubject();
-            String saveRefreshToken = refreshStorage.get(login);
-            if (saveRefreshToken != null && saveRefreshToken.equals(refreshToken)) {
-                UserDTO user = userRepository.findByEmail(login);
-                   //    .orElseThrow(() -> new AuthException("Пользователь не найден"));
-                String accessToken = jwtProvider.generateAccessToken(user);
-                String newRefreshToken = jwtProvider.generateRefreshToken(user);
-                refreshStorage.put(user.getEmail(), newRefreshToken);
-                return new JWTAuthResponse(accessToken, newRefreshToken);
-            }
-        }
-        throw new AuthException("Невалидный JWT токен");
+        throw new AuthException("User already exists");
     }
 }
