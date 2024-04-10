@@ -7,6 +7,7 @@ import by.me.bookservice.repository.BookRepository;
 import by.me.bookservice.service.BookService;
 import by.me.bookservice.exceptions.BookNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 import static by.me.bookservice.util.Constants.BOOK_NOT_FOUND_BY_ID;
 import static by.me.bookservice.util.Constants.BOOK_NOT_FOUND_BY_ISBN;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class DefaultBookService implements BookService {
     private final BookRepository bookRepository;

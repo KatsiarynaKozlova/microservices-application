@@ -4,7 +4,7 @@ import by.me.bookservice.dto.BookDTO;
 import by.me.bookservice.dto.BookListDTO;
 import by.me.bookservice.exceptions.BookNotFoundException;
 import by.me.bookservice.service.impl.DefaultBookService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/books")
 public class BookController {

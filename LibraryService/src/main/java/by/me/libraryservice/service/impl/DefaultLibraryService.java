@@ -6,7 +6,7 @@ import by.me.libraryservice.exception.LibraryNotFoundException;
 import by.me.libraryservice.model.Library;
 import by.me.libraryservice.repository.LibraryRepository;
 import by.me.libraryservice.service.LibraryService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import static by.me.libraryservice.util.Constant.LIBRARY_NOT_FOUND_BY_ID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class DefaultLibraryService implements LibraryService {
     private final LibraryRepository libraryRepository;

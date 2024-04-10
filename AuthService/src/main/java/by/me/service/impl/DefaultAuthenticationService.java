@@ -10,8 +10,8 @@ import by.me.repository.UserRepository;
 import by.me.service.AuthenticationService;
 import by.me.service.JWTProvider;
 import jakarta.security.auth.message.AuthException;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultAuthenticationService implements AuthenticationService {
 
     private final UserRepository userRepository;
