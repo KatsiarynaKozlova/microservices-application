@@ -20,6 +20,7 @@ target/
 *.ipr
 .mvn
 mvnw.*
+mvnw
 
 ### NetBeans ###
 /nbproject/private/
