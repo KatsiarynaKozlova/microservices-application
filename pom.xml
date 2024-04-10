@@ -12,6 +12,7 @@
 
     <url>http://maven.apache.org</url>
     <modules>
+        <module>AuthService</module>
         <module>BookService</module>
         <module>LibraryService</module>
         <module>eureka-server</module>

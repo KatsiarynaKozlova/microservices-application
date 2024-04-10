@@ -16,6 +16,7 @@
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <spring-cloud-starter-bootstrap.version>4.0.0</spring-cloud-starter-bootstrap.version>
     </properties>
     <dependencies>
         <dependency>
@@ -26,6 +27,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>${spring-cloud-starter-bootstrap.version}</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

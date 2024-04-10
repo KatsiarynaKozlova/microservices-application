@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: Books
+          uri: lb://BookService
+          predicates:
+            - Path=/books/**
+        - id: Library
+          uri: lb://LibraryService
+          predicates:
+            - Path=/library/**
+        - id: Authorization
+          uri: lb://AuthService
+          predicates:
+            - Path=/auth/**
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-Url:
+      defaultZone: http://localhost:8761/eureka

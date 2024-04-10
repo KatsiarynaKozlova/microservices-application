@@ -2,24 +2,23 @@ package by.me.libraryservice.service.impl;
 
 import by.me.libraryservice.dto.LibraryDTO;
 import by.me.libraryservice.dto.LibraryListDTO;
+import by.me.libraryservice.exception.LibraryNotFoundException;
 import by.me.libraryservice.model.Library;
 import by.me.libraryservice.repository.LibraryRepository;
 import by.me.libraryservice.service.LibraryService;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static by.me.libraryservice.util.Constant.LIBRARY_NOT_FOUND_BY_ID;
+
+@AllArgsConstructor
 @Service
 public class DefaultLibraryService implements LibraryService {
     private final LibraryRepository libraryRepository;
     private final ModelMapper modelMapper;
-
-    public DefaultLibraryService(LibraryRepository libraryRepository, ModelMapper modelMapper) {
-        this.libraryRepository = libraryRepository;
-        this.modelMapper = modelMapper;
-    }
 
     public LibraryListDTO getFreeBooks() {
         return new LibraryListDTO(libraryRepository.findByDateBorrowedIsNull().
@@ -28,14 +27,13 @@ public class DefaultLibraryService implements LibraryService {
     }
 
     @Override
-    public LibraryDTO updateBook(Long id, LibraryDTO libraryDTO) {
-        Optional<Library> opt_library = libraryRepository.findById(id);
-        if (opt_library.isPresent()) {
-            opt_library.get().setBookId(libraryDTO.getBookId());
-            opt_library.get().setDateBorrowed(libraryDTO.getDateBorrowed());
-            opt_library.get().setDateToReturn(libraryDTO.getDateBorrowed());
-            return modelMapper.map(opt_library.get(), LibraryDTO.class);
-        }
-        return null;
+    public LibraryDTO updateBook(Long id, LibraryDTO libraryDTO) throws LibraryNotFoundException {
+        Library library = libraryRepository.findById(id)
+                .orElseThrow(() -> new LibraryNotFoundException(String.format(LIBRARY_NOT_FOUND_BY_ID, id)));
+        library.setBookId(libraryDTO.getBookId());
+        library.setDateBorrowed(libraryDTO.getDateBorrowed());
+        library.setDateToReturn(libraryDTO.getDateBorrowed());
+        libraryRepository.save(library);
+        return modelMapper.map(library, LibraryDTO.class);
     }
 }
