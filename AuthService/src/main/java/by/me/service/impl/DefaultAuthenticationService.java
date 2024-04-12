@@ -5,6 +5,7 @@ import by.me.dto.JWTAuthResponse;
 import by.me.dto.UserDTO;
 import by.me.exceptions.UserNotFoundException;
 import by.me.exceptions.WrongPasswordException;
+import by.me.mapper.UserMapper;
 import by.me.model.UserCredential;
 import by.me.repository.UserRepository;
 import by.me.service.AuthenticationService;
@@ -26,7 +27,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
     private final UserRepository userRepository;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JWTProvider jwtProvider;
-    private final ModelMapper modelMapper;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -46,7 +47,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
     public void register(UserDTO userDTO) throws AuthException {
         if ( !userRepository.existsUserByEmail(userDTO.getEmail())) {
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-            UserCredential user = modelMapper.map(userDTO, UserCredential.class);
+            UserCredential user = userMapper.toUserCredential(userDTO);
             userRepository.save(user);
         }
         throw new AuthException("User already exists");

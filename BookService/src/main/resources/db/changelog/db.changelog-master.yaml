@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - logicalFilePath: db/changelog/db.changelog.yaml
+  - changeSet:
+      id: 1
+      author: Katsiaryna
+      changes:
+        - createTable:
+            tableName: book
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: isbn
+                  type: VARCHAR(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: author
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: genre
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: book
+            columns:
+              - column:
+                  name: isbn
+                  value: "ISBN9785171121907"
+              - column:
+                  name: title
+                  value: "Сонная лощина"
+              - column:
+                  name: description
+                  value: "Новеллы завораживают, пугают, а главное - читаются на одном дыхании"
+              - column:
+                  name: author
+                  value: "Вашингтон Ирвинг"
+              - column:
+                  name: genre
+                  value: "фэнтези, ужасы, детектив"
+      rollback:
+        - delete:
+            tableName: book

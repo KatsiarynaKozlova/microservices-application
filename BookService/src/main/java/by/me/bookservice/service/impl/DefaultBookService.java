@@ -7,9 +7,7 @@ import by.me.bookservice.model.Book;
 import by.me.bookservice.repository.BookRepository;
 import by.me.bookservice.service.BookService;
 import by.me.bookservice.exceptions.BookNotFoundException;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;

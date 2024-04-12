@@ -8,7 +8,6 @@ import by.me.libraryservice.model.Library;
 import by.me.libraryservice.repository.LibraryRepository;
 import by.me.libraryservice.service.LibraryService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
