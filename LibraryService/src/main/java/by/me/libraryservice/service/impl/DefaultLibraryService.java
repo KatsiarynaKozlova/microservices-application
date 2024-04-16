@@ -3,26 +3,26 @@ package by.me.libraryservice.service.impl;
 import by.me.libraryservice.dto.LibraryDTO;
 import by.me.libraryservice.dto.LibraryListDTO;
 import by.me.libraryservice.exception.LibraryNotFoundException;
+import by.me.libraryservice.mapper.LibraryMapper;
 import by.me.libraryservice.model.Library;
 import by.me.libraryservice.repository.LibraryRepository;
 import by.me.libraryservice.service.LibraryService;
-import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
 import static by.me.libraryservice.util.Constant.LIBRARY_NOT_FOUND_BY_ID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class DefaultLibraryService implements LibraryService {
     private final LibraryRepository libraryRepository;
-    private final ModelMapper modelMapper;
+    private final LibraryMapper libraryMapper;
 
     public LibraryListDTO getFreeBooks() {
         return new LibraryListDTO(libraryRepository.findByDateBorrowedIsNull().
-                stream().map((book) -> modelMapper.map(book, LibraryDTO.class)).
+                stream().map((book) -> libraryMapper.toLibraryDTO(book)).
                 collect(Collectors.toList()));
     }
 
@@ -34,6 +34,6 @@ public class DefaultLibraryService implements LibraryService {
         library.setDateBorrowed(libraryDTO.getDateBorrowed());
         library.setDateToReturn(libraryDTO.getDateBorrowed());
         libraryRepository.save(library);
-        return modelMapper.map(library, LibraryDTO.class);
+        return libraryMapper.toLibraryDTO(library);
     }
 }
